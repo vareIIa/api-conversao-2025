@@ -27,7 +27,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 # Carrega as variáveis do arquivo .env
 load_dotenv()
 # Acessar a variável de ambiente
-API_URL = os.getenv("API_URL", "https://presence.pontoedu.dev") 
+API_URL = os.getenv("API_URL", "https://presence.ipgc.org.br") 
 
 #=====================Criando JSONS=====================================================
 
