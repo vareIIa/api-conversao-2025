@@ -1,0 +1,32 @@
+# Pastas sem necessidade commit
+
+oficial_pasta_envio/
+course/
+jsons/
+
+
+# Diretório de cache do Python
+__pycache__/
+
+
+# Diretório de ambiente virtual
+
+venv/
+VENVConversao/
+myenv/
+
+# Remove .env
+.env
+
+# Arquivo de bloqueio de dependências (se gerado automaticamente e não necessário para controle de versão)
+package-lock.json
+
+# Arquivos do Docker que podem ser gerados
+*.tar.gz
+*.log
+
+# Outros arquivos temporários
+*.pyc
+*.pyo
+*.pyd
+*.swp

@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: APP_NAME_SERVICE_VAR-ingress
+  namespace: K8S_NAMESPACE_VAR
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: APP_HOST_VAR
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: APP_NAME_SERVICE_VAR
+            port:
+              number: INTERNAL_PORT_VAR
+

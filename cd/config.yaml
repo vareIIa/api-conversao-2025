@@ -1,0 +1,18 @@
+app_name: APP_NAME_VAR
+app_host: APP_HOST_VAR
+app_port: INTERNAL_PORT_VAR
+external_port: EXTERNAL_PORT
+registry_url: IMAGE_PATH
+app_env_namespace: APP_ENV_NAMESPACE
+build_number: BUILD_NUMBER
+backend: 2
+health_liveness: /health/liveness
+health_readiness: /health/readiness
+replicas: 1
+env:
+  - name: APP_HOST
+    value: APP_HOST_VAR
+  - name: APP_PORT
+    value: "INTERNAL_PORT_VAR"
+  - name: API_URL
+    value: API_URL_VAR
