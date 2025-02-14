@@ -27,7 +27,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 # Carrega as variáveis do arquivo .env
 load_dotenv()
 # Acessar a variável de ambiente
-API_URL = os.getenv("API_URL", "https://presence.ipgc.org.br") 
+API_URL = os.getenv("API_URL", "https://presence.pontoedu.dev") 
 
 #=====================Criando JSONS=====================================================
 
@@ -814,12 +814,15 @@ def processar_cursos():
     data = request.get_json() 
     course_name_input = data.get('name')
     print(course_name_input) 
+    
     if not course_name_input:
         return jsonify({"error": "Nome do curso não fornecido"}), 400
 
     json_folder = 'jsons/'
     output_folder = 'course/' 
-    shutil.rmtree(output_folder) 
+
+    # Limpa a pasta de saída antes de processar
+    shutil.rmtree(output_folder, ignore_errors=True) 
     print(f"Removendo pasta existente: {output_folder}")
     os.makedirs(output_folder, exist_ok=True) 
     print(f"Pasta recriada: {output_folder}")
@@ -835,34 +838,40 @@ def processar_cursos():
         file_path = os.path.join(json_folder, file_name)
         with open(file_path, 'r', encoding='utf-8') as arq:
             data = json.load(arq)
-            # print(data)
-            course_path = os.path.join('oficial_pasta_envio')
-            output_folder = os.path.join('course/')
-            os.makedirs(output_folder, exist_ok=True)
-            create_assets(output_folder)
-            create_policy_structure(output_folder, course_name_input)
-            create_grading_policy(output_folder)
-            create_assets_json(output_folder)
-            create_course_xml(output_folder)
-            create_course_structure(output_folder,data,course_path, current_year,course_name_input, course_name="T4")
-            compress_course_folder(output_folder)
-    
-    
+        
+        course_path = os.path.join('oficial_pasta_envio')
+        output_folder = os.path.join('course/')
+        os.makedirs(output_folder, exist_ok=True)
+
+        # Criação das estruturas do curso
+        create_assets(output_folder)
+        create_policy_structure(output_folder, course_name_input)
+        create_grading_policy(output_folder)
+        create_assets_json(output_folder)
+        create_course_xml(output_folder)
+        create_course_structure(output_folder, data, course_path, current_year, course_name_input, course_name="T4")
+        compress_course_folder(output_folder)
+
+    # Criação e importação do curso via API
     create_course_api(nome_curso, current_year, org, random_sigla)
     print("\nCURSO CRIADO\n")
     import_course_api(course_id) 
     print("\nCURSO IMPORTADO\n")
     print(f"nome do curso importado: {course_name_input}")
-    
-    chapter_ids.clear()
 
-    # Não chama os._exit(0), permitindo que o servidor continue rodando
+    # Limpa os IDs dos capítulos e reinicia a aplicação
+    chapter_ids.clear()
+    
+    # Reinicia o programa após o processamento
+    restart_program()
+
+    # Não retornará aqui, pois o programa será reiniciado
     return jsonify({"message": "Cursos processados e importados com sucesso"}), 200
 
 if __name__ == "__main__":
-    while True:
-        try:
-            app.run(debug=True, use_reloader=False)
-        except Exception as e:
-            print(f"Erro no servidor: {e}. Reiniciando...")
-            time.sleep(5)  # Aguarda 5 segundos antes de reiniciar
+    try:
+        # Inicia o servidor Flask com depuração e recarregamento ativados
+        app.run(debug=True, use_reloader=True)
+    except KeyboardInterrupt:
+        print("Servidor encerrado pelo usuário.")
+        sys.exit(0)
